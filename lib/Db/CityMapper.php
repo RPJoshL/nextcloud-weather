@@ -17,6 +17,7 @@ use \OCP\IDBConnection;
 use \OCP\AppFramework\Db\QbMapper;
 
 class CityMapper extends QbMapper {
+
         public function __construct (IDBConnection $db) {
                 parent::__construct($db, 'weather_city');
         }
@@ -70,4 +71,5 @@ class CityMapper extends QbMapper {
                 return null;
         }
 };
+
 ?>

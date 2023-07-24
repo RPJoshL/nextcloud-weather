@@ -11,20 +11,21 @@
 
 namespace OCA\Weather\AppInfo;
 
-$application = new Application();
+return [
+	'routes' => [
+		array('name' => 'city#index',			'url' => '/',			'verb' => 'GET'),
 
-$application->registerRoutes($this, array('routes' => array(
-	array('name' => 'city#index',		'url' => '/',			'verb' => 'GET'),
-
-	array('name' => 'city#getall',		'url' => '/city/getall',	'verb' => 'GET'),
-	array('name' => 'city#add',		'url' => '/city/add',		'verb' => 'POST'),
-	array('name' => 'city#delete',		'url' => '/city/delete',	'verb' => 'POST'),
-
-	array('name' => 'weather#get',		'url' => '/weather/get',	'verb' => 'GET'),
-
-	array('name' => 'settings#homeset',	'url' => '/settings/home/set',	'verb' => 'POST'),
-	array('name' => 'settings#apikeyset',	'url' => '/settings/apikey',	'verb' => 'POST'),
-	array('name' => 'settings#metricset',	'url' => '/settings/metric/set','verb' => 'POST'),
-	array('name' => 'settings#metricget',	'url' => '/settings/metric/get','verb' => 'GET'),
-)));
+		array('name' => 'city#getall',			'url' => '/city/getall',	'verb' => 'GET'),
+		array('name' => 'city#add',				'url' => '/city/add',		'verb' => 'POST'),
+		array('name' => 'city#delete',			'url' => '/city/delete',	'verb' => 'POST'),
+	
+		array('name' => 'weather#get',			'url' => '/weather/get',	'verb' => 'GET'),
+	
+		array('name' => 'settings#homeset',		'url' => '/settings/home/set',	'verb' => 'POST'),
+		array('name' => 'settings#apikeyset',	'url' => '/settings/apikey',	'verb' => 'POST'),
+		array('name' => 'settings#metricset',	'url' => '/settings/metric/set','verb' => 'POST'),
+		array('name' => 'settings#metricget',	'url' => '/settings/metric/get','verb' => 'GET'),
+	]
+];
+	
 ?>

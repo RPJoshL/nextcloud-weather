@@ -17,6 +17,7 @@ use \OCP\IDBConnection;
 use \OCP\AppFramework\Db\QbMapper;
 
 class SettingsMapper extends QbMapper {
+        
         public function __construct (IDBConnection $db) {
                 parent::__construct($db, 'weather_config');
         }

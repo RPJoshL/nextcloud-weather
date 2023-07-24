@@ -13,84 +13,92 @@
 namespace OCA\Weather\AppInfo;
 
 use \OCP\AppFramework\App;
-use \OCP\IContainer;
+use Psr\Container\ContainerInterface;
 
-use \OCA\Weather\Controller\CityController;
-use \OCA\Weather\Controller\SettingsController;
-use \OCA\Weather\Controller\WeatherController;
+use OCA\Weather\Controller\CityController;
+use OCA\Weather\Controller\SettingsController;
+use OCA\Weather\Controller\WeatherController;
 
-use \OCA\Weather\Db\CityMapper;
-use \OCA\Weather\Db\SettingsMapper;
+use OCA\Weather\Db\CityMapper;
+use OCA\Weather\Db\SettingsMapper;
+use OCP\AppFramework\Bootstrap\IBootContext;
+use OCP\AppFramework\Bootstrap\IBootstrap;
+use OCP\AppFramework\Bootstrap\IRegistrationContext;
+use OCP\IUserSession;
+use OC\User\Session;
 
-class Application extends App {
+class Application extends App implements IBootstrap {
 
-	public function __construct (array $urlParams=array()) {
+	public function __construct (array $urlParams = []) {
 		parent::__construct('weather', $urlParams);
+    }
 
-		$container = $this->getContainer();
+	public function register(IRegistrationContext $context): void {
+		
+		$context->registerService('UserId', function(ContainerInterface $c) {
+			/** @var Session */
+			$userSession = $c->get(IUserSession::class);
 
-		/**
-		 * Core
-		 */
-		$container->registerService('UserId', function(IContainer $c) {
-			$user = $c->getServer()->getUserSession()->getUser();
-			return $user ? $user->getUID() : null;
-    });
-
-		$container->registerService('Config', function($c) {
-			return $c->query('ServerContainer')->getConfig();
+			return $userSession->getUser() ? $userSession->getUser()->getUID() : null;
 		});
 
-		$container->registerService('L10N', function($c) {
-		return $c->query('ServerContainer')->getL10N($c->query('AppName'));
+		$context->registerService('Config', function(ContainerInterface $c) {
+			return $c->get('ServerContainer')->getConfig();
+		});
+
+		$context->registerService('L10N', function(ContainerInterface $c) {
+		return $c->get('ServerContainer')->getL10N($c->get('AppName'));
 		});
 
 		/**
 		 * Database Layer
 		 */
-		$container->registerService('CityMapper', function(IContainer $c) {
-			return new CityMapper($c->query('ServerContainer')->getDatabaseConnection());
+		$context->registerService('CityMapper', function(ContainerInterface $c) {
+			return new CityMapper($c->get('ServerContainer')->getDatabaseConnection());
 		});
 
-		$container->registerService('SettingsMapper', function(IContainer $c) {
-			return new SettingsMapper($c->query('ServerContainer')->getDatabaseConnection());
+		$context->registerService('SettingsMapper', function(ContainerInterface $c) {
+			return new SettingsMapper($c->get('ServerContainer')->getDatabaseConnection());
 		});
 
 		/**
 		 * Controllers
 		 */
-		$container->registerService('CityController', function(IContainer $c) {
+		$context->registerService('CityController', function(ContainerInterface $c) {
 			return new CityController(
-				$c->query('AppName'),
-				$c->query('Config'),
-				$c->query('Request'),
-				$c->query('UserId'),
-				$c->query('CityMapper'),
-				$c->query('SettingsMapper')
+				$c->get('AppName'),
+				$c->get('Config'),
+				$c->get('Request'),
+				$c->get('UserId'),
+				$c->get('CityMapper'),
+				$c->get('SettingsMapper')
 			);
 		});
 
-		$container->registerService('SettingsController', function(IContainer $c) {
+		$context->registerService('SettingsController', function(ContainerInterface $c) {
 			return new SettingsController(
-				$c->query('AppName'),
-				$c->query('Config'),
-				$c->query('Request'),
-				$c->query('UserId'),
-				$c->query('SettingsMapper'),
-				$c->query('CityMapper')
+				$c->get('AppName'),
+				$c->get('Config'),
+				$c->get('Request'),
+				$c->get('UserId'),
+				$c->get('SettingsMapper'),
+				$c->get('CityMapper')
 			);
 		});
 
-		$container->registerService('WeatherController', function(IContainer $c) {
+		$context->registerService('WeatherController', function(ContainerInterface $c) {
 			return new WeatherController(
-				$c->query('AppName'),
-				$c->query('Config'),
-				$c->query('Request'),
-				$c->query('UserId'),
-				$c->query('CityMapper'),
-				$c->query('SettingsMapper'),
-				$c->query('L10N')
+				$c->get('AppName'),
+				$c->get('Config'),
+				$c->get('Request'),
+				$c->get('UserId'),
+				$c->get('CityMapper'),
+				$c->get('SettingsMapper'),
+				$c->get('L10N')
 			);
 		});
+	}
+
+	public function boot(IBootContext $context): void {
 	}
 }
