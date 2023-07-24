@@ -13,7 +13,6 @@ namespace OCA\Weather\Controller;
 
 use \OCP\IRequest;
 use \OCP\AppFramework\Controller;
-use \OCA\Weather\Controller\IntermediateController;
 
 class IntermediateController extends Controller {
 	private $curl;
